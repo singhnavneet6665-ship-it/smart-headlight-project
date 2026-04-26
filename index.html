@@ -2,97 +2,133 @@
 
 <html>
 <head>
-  <title>Smart Headlight System</title>
+  <title>Smart Headlight Dashboard</title>
+
   <style>
     body {
       font-family: Arial;
-      text-align: center;
       background: #020617;
       color: white;
+      text-align: center;
     }
 
-```
-.card {
-  background: #0f172a;
-  padding: 20px;
-  margin: 50px auto;
-  width: 320px;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-}
+    h1 {
+      margin-top: 20px;
+    }
 
-h1 {
-  margin-top: 20px;
-}
+    .card {
+      background: #0f172a;
+      width: 350px;
+      margin: 30px auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
 
-.status {
-  margin: 10px 0;
-}
+    .status {
+      margin: 10px 0;
+      font-size: 18px;
+    }
 
-button {
-  margin: 10px;
-  padding: 10px 20px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-}
+    .bar {
+      height: 10px;
+      background: gray;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 10px 0;
+    }
 
-.high {
-  background: red;
-  color: white;
-}
+    .fill {
+      height: 100%;
+      width: 0%;
+      background: green;
+      transition: 0.5s;
+    }
 
-.low {
-  background: green;
-  color: white;
-}
-```
+    button {
+      margin: 10px;
+      padding: 10px 15px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .high { background: red; color: white; }
+    .low { background: green; color: white; }
+    .auto { background: blue; color: white; }
 
   </style>
+
 </head>
 
 <body>
 
-<h1>🚗 Smart Headlight Dashboard</h1>
+<h1>🚗 Smart Headlight System</h1>
 
 <div class="card">
-  <h2 id="mode">Mode: Day</h2>
-  <h2 id="beam">Beam: OFF</h2>
-  <h3 id="intensity">Intensity: 0%</h3>
-  <h3 id="vehicle">Vehicle: Not Detected</h3>
+  <div class="status" id="mode">Mode: Day</div>
+  <div class="status" id="beam">Beam: OFF</div>
+  <div class="status" id="vehicle">Vehicle: Not Detected</div>
+
+  <div class="bar">
+    <div class="fill" id="intensityBar"></div>
+  </div>
+  <div id="intensityText">Intensity: 0%</div>
 </div>
 
-<button class="high" onclick="setHigh()">High Beam</button> <button class="low" onclick="setLow()">Low Beam</button>
+<button class="high" onclick="setHigh()">High Beam</button> <button class="low" onclick="setLow()">Low Beam</button> <button class="auto" onclick="autoMode()">Auto Mode</button>
 
 <script>
 
+let autoRunning = true;
+
+function updateIntensity(value) {
+  document.getElementById("intensityBar").style.width = value + "%";
+  document.getElementById("intensityText").innerText = "Intensity: " + value + "%";
+}
+
 function setHigh() {
+  autoRunning = false;
   document.getElementById("mode").innerText = "Mode: Night";
   document.getElementById("beam").innerText = "Beam: HIGH";
-  document.getElementById("intensity").innerText = "Intensity: 100%";
   document.getElementById("vehicle").innerText = "Vehicle: Not Detected";
+  updateIntensity(100);
 }
 
 function setLow() {
+  autoRunning = false;
   document.getElementById("mode").innerText = "Mode: Night";
   document.getElementById("beam").innerText = "Beam: LOW";
-  document.getElementById("intensity").innerText = "Intensity: 40%";
   document.getElementById("vehicle").innerText = "Vehicle: Detected";
+  updateIntensity(40);
 }
 
-// Auto simulation
+function autoMode() {
+  autoRunning = true;
+}
+
 setInterval(() => {
+  if (!autoRunning) return;
+
   let rand = Math.random();
 
   if (rand < 0.3) {
     document.getElementById("mode").innerText = "Mode: Day";
     document.getElementById("beam").innerText = "Beam: OFF";
-    document.getElementById("intensity").innerText = "Intensity: 0%";
     document.getElementById("vehicle").innerText = "Vehicle: Not Detected";
-  } else if (rand < 0.6) {
-    setLow();
-  } else {
-    setHigh();
+    updateIntensity(0);
+  } 
+  else if (rand < 0.6) {
+    document.getElementById("mode").innerText = "Mode: Night";
+    document.getElementById("beam").innerText = "Beam: LOW";
+    document.getElementById("vehicle").innerText = "Vehicle: Detected";
+    updateIntensity(40);
+  } 
+  else {
+    document.getElementById("mode").innerText = "Mode: Night";
+    document.getElementById("beam").innerText = "Beam: HIGH";
+    document.getElementById("vehicle").innerText = "Vehicle: Not Detected";
+    updateIntensity(100);
   }
 
 }, 3000);
@@ -101,3 +137,4 @@ setInterval(() => {
 
 </body>
 </html>
+
